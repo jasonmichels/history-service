@@ -11,6 +11,5 @@ COPY . /src
 RUN cd /src; npm install
 
 EXPOSE  8080
-set :bind, '0.0.0.0'
 
 CMD ["node", "/src/app.js"]
