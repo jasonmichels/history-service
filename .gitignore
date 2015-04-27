@@ -3,3 +3,4 @@ Thumbs.db
 /.idea
 /node_modules
 /uploads
+npm-debug.log

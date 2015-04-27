@@ -1,5 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/testing'; // move to config
+var url = 'mongodb://' + process.env.NODE_MONGODB_URL + '/' + process.env.NODE_MONGODB_DATABASE_NAME;
 
 module.exports = {
 
@@ -10,18 +10,25 @@ module.exports = {
      * @param $callback
      */
     getAllForKey: function ($collectionKey, $callback) {
-
         // @TODO first potentially check to see if the data is in memory cache before hitting database
 
         // Connect to database and get the data if not in cache
         MongoClient.connect(url, function(err, db) {
-            // Get the collection
+            if (err) {
+                console.log('connection error happened');
+                console.log(err);
+            }
+             //Get the collection
             var collection = db.collection($collectionKey);
 
             // Peform a simple find and return all the documents
             collection.find().toArray(function(err, docs) {
-                db.close();
+                if (err) {
+                    console.log('Error happened finding a collection');
+                }
+
                 $callback(docs);
+                db.close();
             });
         });
     },
