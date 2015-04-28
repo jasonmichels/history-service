@@ -1,8 +1,9 @@
 var now = require("performance-now");
 
-var CircuitBreaker = function (commandName) {
+var CircuitBreaker = function (commandName, config) {
     console.log('New circuit breaker created for command');
     this.commandName = commandName;
+    this.config = config;
     this.error = null;
     this.status = 'closed';
     this.requestTime = null;
@@ -10,7 +11,6 @@ var CircuitBreaker = function (commandName) {
     this.endTime = null;
     this.startProfiling();
 };
-
 
 CircuitBreaker.prototype.execute = function () {
     console.log('Execute the circuit breaker');
