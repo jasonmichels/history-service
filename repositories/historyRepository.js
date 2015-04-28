@@ -6,30 +6,36 @@ module.exports = {
     /**
      * Get all history for the key
      *
-     * @param $collectionKey
-     * @param $callback
+     * @param collectionKey
+     * @param circuitBreaker
+     * @param callback
      */
-    getAllForKey: function ($collectionKey, $callback) {
+    getAllForKey: function (collectionKey, circuitBreaker, callback) {
         // @TODO first potentially check to see if the data is in memory cache before hitting database
 
         // Connect to database and get the data if not in cache
         MongoClient.connect(url, function(err, db) {
             if (err) {
-                console.log('connection error happened');
-                console.log(err);
-            }
-             //Get the collection
-            var collection = db.collection($collectionKey);
-
-            // Peform a simple find and return all the documents
-            collection.find().toArray(function(err, docs) {
-                if (err) {
-                    console.log('Error happened finding a collection');
-                }
-
-                $callback(docs);
+                circuitBreaker.rejected(err);
+                callback(err, null);
                 db.close();
-            });
+            } else {
+                //Get the collection
+                var collection = db.collection(collectionKey);
+
+                // Peform a simple find and return all the documents
+                collection.find().toArray(function(err, docs) {
+                    if (err) {
+                        circuitBreaker.exception(err);
+                        callback(err, null);
+                        db.close();
+                    } else {
+                        circuitBreaker.success();
+                        callback(null, docs);
+                        db.close();
+                    }
+                });
+            }
         });
     },
 

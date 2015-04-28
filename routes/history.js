@@ -7,10 +7,16 @@ var historyRepository = require('../repositories/historyRepository');
  */
 router.get('/:client/:key', function(req, res, next) {
 
+  var fetchAllHistoryCommandHandler = require('../commands/fetchAllHistoryCommandHandler');
+
   var collectionKey = req.params.client + '/' + req.params.key;
 
-  historyRepository.getAllForKey(collectionKey, function (docs) {
-    res.json(docs);
+  fetchAllHistoryCommandHandler.handle(collectionKey, function (err, json) {
+    if (err) {
+      res.json({error: err, message: "Error processing fetchAllHistoryCommandHandler"});
+    } else {
+      res.json(json);
+    }
   });
 
 });

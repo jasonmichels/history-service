@@ -17,6 +17,9 @@ $ docker run -it -p 3000:3000 -e "NODE_ENV=development" -e "NODE_MONGODB_URL=cha
 
 ### Dependencies
  - Running Mongodb server. Suggest using docker and https://registry.hub.docker.com/u/tutum/mongodb/
+ ```sh
+ $ docker run -d -e AUTH=no -p 27017:27017 -p 28017:28017 tutum/mongodb
+ ```
 
 ### Todo's
  - ...
