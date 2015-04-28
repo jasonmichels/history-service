@@ -1,66 +1,108 @@
 var now = require("performance-now");
 
+/**
+ * Circuit breaker class to help with remote system error reporting and some day handling
+ *
+ * @param commandName
+ * @param config
+ * @constructor
+ */
 var CircuitBreaker = function (commandName, config) {
-    console.log('New circuit breaker created for command');
-    this.commandName = commandName;
-    this.config = config;
-    this.error = null;
-    this.status = 'closed';
-    this.requestTime = null;
-    this.startTime = null;
-    this.endTime = null;
-    this.startProfiling();
+    var self = this;
+
+    self.commandName = commandName;
+    self.config = config;
+    self.error = null;
+    self.status = 'closed';
+    self.requestTime = null;
+    self.requestResponseType = null;
+    self.startTime = null;
+    self.endTime = null;
+    self.startProfiling();
 };
 
+/**
+ * Execute the circuit breaker and update the analytics application
+ */
 CircuitBreaker.prototype.execute = function () {
-    console.log('Execute the circuit breaker');
-    console.log('This is the execute command name: ' + this.commandName);
+    var self = this;
+
+    self.requestTime = (self.endTime-self.startTime).toFixed(3);
+
     console.log('Send message to the circuit breaker analytics application for tracking');
-    this.requestTime = (this.endTime-this.startTime).toFixed(3);
-    console.log('Request time: ' + this.requestTime);
 };
 
+/**
+ * Success request was made
+ */
 CircuitBreaker.prototype.success = function () {
-    console.log('Successfull message was sent');
-    this.status = 'closed';
-    this.stopProfiling();
-    this.execute();
+    var self = this;
+
+    self.status = 'closed';
+    self.requestResponseType = 'success';
+    self.stopProfiling();
+    self.execute();
 };
 
+/**
+ * Request was rejected
+ *
+ * @param err
+ */
 CircuitBreaker.prototype.rejected = function (err) {
-    console.log('Request was rejected');
-    this.status = 'open';
-    this.error = err;
-    this.stopProfiling();
-    this.execute();
+    var self = this;
+
+    self.requestResponseType = 'rejected';
+    self.status = 'open';
+    self.error = err;
+    self.stopProfiling();
+    self.execute();
 };
 
+/**
+ * A timeout occurred
+ *
+ * @param err
+ */
 CircuitBreaker.prototype.timeout = function (err) {
-    console.log('The request timed out');
-    this.status = 'open';
-    this.error = err;
-    this.stopProfiling();
-    this.execute();
+    var self = this;
+
+    self.requestResponseType = 'timeout';
+    self.status = 'open';
+    self.error = err;
+    self.stopProfiling();
+    self.execute();
 };
 
+/**
+ * An exception was thrown on the circuit breaker
+ *
+ * @param err
+ */
 CircuitBreaker.prototype.exception = function (err) {
-    console.log('An exception was found with this class');
-    this.status = 'open';
-    this.error = err;
-    this.stopProfiling();
-    this.execute();
+    var self = this;
+
+    self.requestResponseType = 'exception';
+    self.status = 'open';
+    self.error = err;
+    self.stopProfiling();
+    self.execute();
 };
 
+/**
+ * Start profiling the application
+ */
 CircuitBreaker.prototype.startProfiling = function () {
-    console.log('Start the request');
-    this.startTime = now();
-
+    var self = this;
+    self.startTime = now();
 };
 
+/**
+ * Stop profiling the application
+ */
 CircuitBreaker.prototype.stopProfiling = function () {
-    // calculate the request time and set to the class variable
-    console.log('Stope the request');
-    this.endTime = now();
+    var self = this;
+    self.endTime = now();
 };
 
 module.exports = CircuitBreaker;
