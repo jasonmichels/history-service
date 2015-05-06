@@ -1,5 +1,5 @@
-var historyRepository = require('../repositories/historyRepository');
-var circuitBreakerClass = require('../circuitBreakers/circuitBreaker');
+var HistoryRepository = require('../repositories/historyRepository');
+var CircuitBreaker = require('../circuitBreakers/circuitBreaker');
 
 module.exports = {
 
@@ -12,10 +12,21 @@ module.exports = {
      */
     handle: function (collectionKey, json, callback) {
 
-        var circuitBreaker = new circuitBreakerClass('SaveHistoryCommandHandler', {max_failures: 5, call_timeout_ms: 500, reset_timeout_ms: 0});
+        var circuit = new CircuitBreaker('SaveHistoryCommandHandler', {max_failures: 5, call_timeout_ms: 500, reset_timeout_ms: 0});
 
-        historyRepository.insertOrUpdateIfExists(collectionKey, json, circuitBreaker, function (err, result) {
-            callback(err, result);
+        var historyRepo = new HistoryRepository();
+
+        historyRepo.on('success', function (result) {
+            circuit.success();
+            callback(null, result);
+        }).on('error', function (err) {
+            circuit.exception(err);
+            callback(err, null);
+        }).on('rejected', function (err) {
+            circuit.rejected(err);
+            callback(err, null);
         });
+
+        historyRepo.insertOrUpdateIfExists(collectionKey, json);
     }
 };

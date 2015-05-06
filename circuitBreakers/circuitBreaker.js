@@ -7,7 +7,7 @@ var now = require("performance-now");
  * @param config
  * @constructor
  */
-var CircuitBreaker = function (commandName, config) {
+function CircuitBreaker (commandName, config) {
     var self = this;
 
     self.commandName = commandName;
@@ -19,7 +19,7 @@ var CircuitBreaker = function (commandName, config) {
     self.startTime = null;
     self.endTime = null;
     self.startProfiling();
-};
+}
 
 /**
  * Execute the circuit breaker and update the analytics application

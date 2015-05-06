@@ -1,58 +1,74 @@
-var database = require('../lib/mongodb');
+var util         = require("util");
+var EventEmitter = require("events").EventEmitter;
+var Mongo = require('../lib/mongodb');
 
-module.exports = {
+function HistoryRepository () {
+    EventEmitter.call(this);
+}
 
-    /**
-     * Get all history for the key
-     *
-     * @param collectionKey
-     * @param circuitBreaker
-     * @param callback
-     */
-    getAllForKey: function (collectionKey, circuitBreaker, callback) {
-        var self = this;
+util.inherits(HistoryRepository, EventEmitter);
 
-        database.execute(collectionKey, circuitBreaker, function (collection) {
-            // Peform a simple find and return all the documents
-            collection.find().toArray(function(err, result) {
-                self.updateCircuitBreaker(err, result, circuitBreaker);
-                callback(err, result);
-            });
+/**
+ * Get all for key
+ *
+ * @param collectionKey
+ */
+HistoryRepository.prototype.getAllForKey = function (collectionKey) {
+    var self = this;
+
+    var database = new Mongo();
+
+    database.on('success', function(collection) {
+
+        collection.find().toArray(function(err, result) {
+            self.respond(err, result);
         });
-    },
 
-    /**
-     * Update object, unless it exists, then insert
-     *
-     * @param collectionKey
-     * @param json
-     * @param circuitBreaker
-     * @param callback
-     */
-    insertOrUpdateIfExists: function (collectionKey, json, circuitBreaker, callback) {
-        var self = this;
+    }).on('rejected', function (err) {
+        self.emit('rejected', err);
+    });
 
-        database.execute(collectionKey, circuitBreaker, function (collection) {
-            collection.updateOne(json, json, {upsert:true}, function(err, result) {
-                self.updateCircuitBreaker(err, result, circuitBreaker);
-                callback(err, result);
+    database.execute(collectionKey);
+};
 
-            });
+/**
+ * Insert or update if exits
+ *
+ * @param collectionKey
+ * @param json
+ */
+HistoryRepository.prototype.insertOrUpdateIfExists = function (collectionKey, json) {
+    var self = this;
+
+    var database = new Mongo();
+
+    database.on('success', function(collection) {
+
+        collection.updateOne(json, json, {upsert:true}, function(err, result) {
+            self.respond(err, result);
         });
-    },
 
-    /**
-     * Update the circuit breaker with the results
-     *
-     * @param err
-     * @param result
-     * @param circuitBreaker
-     */
-    updateCircuitBreaker: function (err, result, circuitBreaker) {
-        if (err) {
-            circuitBreaker.exception(err);
-        } else {
-            circuitBreaker.success();
-        }
+    }).on('rejected', function (err) {
+        self.emit('rejected', err);
+    });
+
+    database.execute(collectionKey);
+};
+
+/**
+ * Respond to the database request by throwing events
+ *
+ * @param err
+ * @param result
+ */
+HistoryRepository.prototype.respond = function (err, result) {
+    var self = this;
+
+    if (err) {
+        self.emit('error', err);
+    } else {
+        self.emit('success', result);
     }
 };
+
+module.exports = HistoryRepository;

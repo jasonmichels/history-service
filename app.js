@@ -1,6 +1,5 @@
 var express = require('express');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/history');
@@ -10,7 +9,6 @@ var app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 app.use('/history', routes);
 
@@ -22,7 +20,7 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
-// @TODO implement better error handling
+// @TODO potentially implement better error handling
 
 // development error handler
 // will print stacktrace

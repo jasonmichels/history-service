@@ -28,15 +28,11 @@ router.put('/:client/:key', function(req, res, next) {
     var json = req.body;
 
     // Return quick and continue processing database request
-    res.json({ message: "Inserted item into database", status: "success" });
+    res.json({ message: "Processing history item", status: "success" });
 
     var saveHistoryCommandHandler = require('../commands/saveHistoryCommandHandler');
     saveHistoryCommandHandler.handle(collectionKey, json, function (err, result) {
-        if (err) {
-            console.log('Error inserting into database');
-        } else {
-            console.log("Inserted a document into the collection. " + collectionKey);
-        }
+        console.log('Circuit breaker already took care of error, and user is gone, so not much to do here');
     });
 
 });
