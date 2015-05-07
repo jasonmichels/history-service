@@ -1,4 +1,48 @@
 var now = require("performance-now");
+var host = null;
+var iouuid = require('innodb-optimized-uuid');
+var http = require('http');
+
+var sendAnalyticsEvent = function (data) {
+    var dataString = JSON.stringify(data);
+
+    var headers = {
+        'Content-Type': 'application/json',
+        'Content-Length': dataString.length
+    };
+
+    var options = {
+        host: '192.168.59.103',
+        path: '/event',
+        port: 3001,
+        method: 'POST',
+        headers: headers
+    };
+
+    callback = function(response) {
+        var statusCode = response.statusCode;
+        var headers = JSON.stringify(response.headers);
+        response.setEncoding('utf8');
+
+        var responseString = '';
+        response.on('data', function (chunk) {
+            responseString += chunk;
+        });
+
+        response.on('end', function () {
+            var resultObject = JSON.parse(responseString);
+        });
+    };
+
+    var req = http.request(options, callback);
+
+    req.on('error', function(err) {
+        // not sure yet what to do with error. For now ignore it if happens
+    });
+    //This is the data we are posting, it needs to be a string or a buffer
+    req.write(dataString);
+    req.end();
+};
 
 /**
  * Circuit breaker class to help with remote system error reporting and some day handling
@@ -28,7 +72,17 @@ CircuitBreaker.prototype.execute = function () {
 
     self.requestTime = (self.endTime-self.startTime).toFixed(3);
 
-    console.log('Send message to the circuit breaker analytics application for tracking');
+    var data = {
+        _id: iouuid.generate(),
+        status: self.status,
+        requestTime: self.requestTime,
+        requestResponseType: self.requestResponseType,
+        commandName: self.commandName,
+        host: host,
+        createdAt: new Date().getTime()
+    };
+
+    sendAnalyticsEvent(data);
 };
 
 /**
