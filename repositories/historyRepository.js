@@ -24,8 +24,8 @@ HistoryRepository.prototype.getAllForKey = function (collectionKey) {
             self.respond(err, result);
         });
 
-    }).on('rejected', function (err) {
-        self.emit('rejected', err);
+    }).on('error', function (err) {
+        self.respond(err, null);
     });
 
     database.execute(collectionKey);
@@ -48,8 +48,8 @@ HistoryRepository.prototype.insertOrUpdateIfExists = function (collectionKey, js
             self.respond(err, result);
         });
 
-    }).on('rejected', function (err) {
-        self.emit('rejected', err);
+    }).on('error', function (err) {
+        self.respond(err, null);
     });
 
     database.execute(collectionKey);

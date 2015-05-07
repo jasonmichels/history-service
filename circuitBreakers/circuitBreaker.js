@@ -18,7 +18,6 @@ function CircuitBreaker (commandName, config) {
     self.requestResponseType = null;
     self.startTime = null;
     self.endTime = null;
-    self.startProfiling();
 }
 
 /**
