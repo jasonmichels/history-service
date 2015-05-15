@@ -32,7 +32,7 @@ router.put('/:client/:key', function(req, res, next) {
     res.json({ message: "Processing history item", status: "success" });
 
     saveHistoryCommandHandler.handle(collectionKey, json, function (err, result) {
-        console.log('Circuit breaker already took care of everything, and user is gone, so not much to do here');
+        // Circuit breaker already took care of everything, and user is gone, so not much to do here
     });
 
 });
