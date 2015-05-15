@@ -19,6 +19,11 @@ $ docker run -it -p 3000:3000 -e "PORT=3000" -e "NODE_ENV=development" -e "NODE_
 $ docker run -d --restart=always -p 3000:3000 -e "PORT=3000" -e "NODE_ENV=production" -e "NODE_MONGODB_URL=change ip/host" -e "NODE_MONGODB_DATABASE_NAME=history-service" -e "ANALYTICS_EVENT_ENABLED=true" -e "ANALYTICS_EVENT_HOST=change ip/host" -e "ANALYTICS_EVENT_PORT=3001" --name history-service <name>/history-service
 ```
 
+### Development with Docker Composer
+```sh
+$ docker-compose up -d
+```
+
 ### Debugging
 To debug ExpressJS framework during development, add the following environment variable to the docker run command
 - DEBUG=history-service:*

@@ -1,0 +1,29 @@
+web:
+  build: .
+  ports:
+   - "3000:3000"
+  environment:
+    - PORT=3000
+    - NODE_ENV=development
+    - NODE_MONGODB_URL=192.168.59.103:27017
+    - NODE_MONGODB_DATABASE_NAME=history-service
+    - ANALYTICS_EVENT_ENABLED=true
+    - ANALYTICS_EVENT_HOST=192.168.59.103
+    - ANALYTICS_EVENT_PORT=3001
+    - DEBUG=history-service:*
+circuitBreakerAnalytics:
+  image: jasonmichels/circuit-breaker-analytics
+  ports:
+   - "3001:3001"
+  environment:
+    - PORT=3001
+    - NODE_ENV=development
+    - NODE_MONGODB_URL=192.168.59.103:27017
+    - NODE_MONGODB_DATABASE_NAME=circuit-breaker-analytics
+mongoDB:
+  image: tutum/mongodb
+  ports:
+   - "27017:27017"
+   - "28017:28017"
+  environment:
+    - AUTH=no
