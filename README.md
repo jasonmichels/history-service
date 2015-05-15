@@ -12,7 +12,7 @@ $ DEBUG=history-service:* ./bin/www
 ```sh
 $ cd history-service && npm install
 $ docker build -t <name>/history-service .
-$ docker run -it -p 3000:3000 -e "NODE_ENV=development" -e "NODE_MONGODB_URL=change ip/host" -e "NODE_MONGODB_DATABASE_NAME=history-service" --rm --name history-service <name>/history-service
+$ docker run -it -p 3000:3000 -e "NODE_ENV=development" -e "NODE_MONGODB_URL=change ip/host" -e "NODE_MONGODB_DATABASE_NAME=history-service" -e "ANALYTICS_EVENT_ENABLED=true" -e "ANALYTICS_EVENT_HOST=change ip/host" -e "ANALYTICS_EVENT_PORT=3001" --rm --name history-service <name>/history-service
 ```
 
 ### Dependencies

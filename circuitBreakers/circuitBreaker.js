@@ -12,9 +12,9 @@ var sendAnalyticsEvent = function (data) {
     };
 
     var options = {
-        host: '192.168.59.103',
+        host: process.env.ANALYTICS_EVENT_HOST,
         path: '/event',
-        port: 3001,
+        port: process.env.ANALYTICS_EVENT_PORT,
         method: 'POST',
         headers: headers
     };
@@ -82,7 +82,9 @@ CircuitBreaker.prototype.execute = function () {
         createdAt: new Date().getTime()
     };
 
-    sendAnalyticsEvent(data);
+    if (process.env.ANALYTICS_EVENT_ENABLED == "true") {
+        sendAnalyticsEvent(data);
+    }
 };
 
 /**
