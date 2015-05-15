@@ -1,7 +1,17 @@
 {
   "name": "history-service",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "This is a microservice designed to store history of objects from other services.",
   "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "Jason Michels",
+    "url" : "http://jasonmichels.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jasonmichels/history-service"
+  },
   "scripts": {
     "start": "node ./bin/www"
   },
