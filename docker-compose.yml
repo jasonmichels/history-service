@@ -11,6 +11,8 @@ web:
     - ANALYTICS_EVENT_HOST=192.168.59.103
     - ANALYTICS_EVENT_PORT=3001
     - DEBUG=history-service:*
+    - AUTHENTICATION_URL=id.website.net
+    - AUTHENTICATION_ENABLED=true
 circuitBreakerAnalytics:
   image: jasonmichels/circuit-breaker-analytics
   ports:
