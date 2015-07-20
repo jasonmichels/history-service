@@ -11,12 +11,12 @@ $ DEBUG=history-service:* ./bin/www
 ```sh
 $ cd history-service
 $ docker build -t <name>/history-service .
-$ docker run -it -p 3000:3000 -e "PORT=3000" -e "NODE_ENV=development" -e "NODE_MONGODB_URL=change ip/host" -e "NODE_MONGODB_DATABASE_NAME=history-service" -e "ANALYTICS_EVENT_ENABLED=true" -e "ANALYTICS_EVENT_HOST=change ip/host" -e "ANALYTICS_EVENT_PORT=3001" --rm --name history-service <name>/history-service
+$ docker run -it -p 3000:3000 -e "PORT=3000" --link mongodb:mongodb -e "NODE_ENV=development" -e "NODE_MONGODB_URL=mongodb" -e "NODE_MONGODB_DATABASE_NAME=history-service" -e "ANALYTICS_EVENT_ENABLED=false" -e "ANALYTICS_EVENT_HOST=change ip/host" -e "ANALYTICS_EVENT_PORT=3001" --rm --name history-service <name>/history-service
 ```
 
 ### Production installation with Restart
 ```sh
-$ docker run -d --restart=always -p 3000:3000 -e "PORT=3000" -e "NODE_ENV=production" -e "NODE_MONGODB_URL=change ip/host" -e "NODE_MONGODB_DATABASE_NAME=history-service" -e "ANALYTICS_EVENT_ENABLED=true" -e "ANALYTICS_EVENT_HOST=change ip/host" -e "ANALYTICS_EVENT_PORT=3001" --name history-service <name>/history-service
+$ docker run -d --restart=always -p 3000:3000 -e "PORT=3000" --link mongodb:mongodb -e "NODE_ENV=production" -e "NODE_MONGODB_URL=mongodb" -e "NODE_MONGODB_DATABASE_NAME=history-service" -e "ANALYTICS_EVENT_ENABLED=false" -e "ANALYTICS_EVENT_HOST=change ip/host" -e "ANALYTICS_EVENT_PORT=3001" --name history-service <name>/history-service
 ```
 
 ### Development with Docker Composer
@@ -36,6 +36,7 @@ To debug ExpressJS framework during development, add the following environment v
 
 ### Todo's
  - Potentially implement alternative configuration loading
+ - Update docker compose file to use mongodb linking
 
 ### License
 This code is maintained by Jason Michels and open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
