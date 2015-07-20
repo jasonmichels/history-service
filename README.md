@@ -31,7 +31,7 @@ To debug ExpressJS framework during development, add the following environment v
 ### Dependencies
  - Running Mongodb server. Suggest using docker and https://registry.hub.docker.com/u/tutum/mongodb/
  ```sh
- $ docker run -d -e AUTH=no -p 27017:27017 -p 28017:28017 tutum/mongodb
+ $ docker run -d -e AUTH=no --name mongodb tutum/mongodb
  ```
 
 ### Todo's
