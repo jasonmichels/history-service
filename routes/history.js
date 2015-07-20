@@ -12,6 +12,7 @@ router.get('/:client/:key', function(req, res, next) {
 
     fetchAllHistoryCommandHandler.handle(collectionKey, function (err, result) {
         if (err) {
+            res.status(400);
             res.json({error: err, message: "An error occurred trying to access history"});
         } else {
             res.json(result);
